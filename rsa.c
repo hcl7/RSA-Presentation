@@ -65,26 +65,27 @@ bool isprime(int n){
 	return flag;
 }
 
-int generate_prime(int min_num, int max_num){
-	int result=0,low_num=0,hi_num=0;
+int generate_prime(int min, int max){
+	int result=0,low=0,hi=0;
 	bool flag = false;
-	if(min_num<max_num)
+	if(min<max)
 	{
-		low_num=min_num;
-        hi_num=max_num+1;
+		low=min;
+        hi=max+1;
     }else{
-    	low_num=max_num+1;
-        hi_num=min_num;
+    	low=max+1;
+        hi=min;
     }
     srand(time(NULL));
-    result = (rand()%(hi_num-low_num))+low_num;
+    result = (rand()%(hi-low))+low;
     while (!flag){
     	if (isprime(result)){
+    		flag = true;
     		break;
     	}
     	else{
     		srand(time(NULL));
-    		result = (rand()%(hi_num-low_num))+low_num;
+    		result = (rand()%(hi-low))+low;
     		flag = false;
     	}
     }
@@ -160,11 +161,19 @@ bool coPrime(int e, int fn){
 	}
 }
 
+int cmod(int a, int b){
+	int ret = a % b;
+   	if(ret < 0)
+    	ret+=b;
+   	return ret;
+}
+
 int get_decryption_key(int e, int fn){
-	int x, y, d;
+	int x, y, d, key;
 	if (coPrime(e, fn)){
 		xgcd(e, fn, &x, &y, &d);
-		return x % fn;
+		key = cmod(x, fn);
+		return key;
 	}
 	else return 0;
 }
@@ -183,20 +192,32 @@ void numberFactorization(int n, int *p, int *q){
 }
 
 void main(int argc, char *argv[]){
-	int n, p, q, e, fn, d, m, c, md;
+	int n, p, q, e, fn, d, m, c, md, p1, q1;
 	if(argc > 0){
 	    m = atoi(argv[1]);
 	    e = generate_prime(3, 11);
+	    printf("e=%d\n", e);
 	    p = generate_prime(11, 21);
 	    q = generate_prime(21, 41);
-	    fn = fin(p, q);
 	    printf("p=%d q=%d\n", p, q);
+	    fn = fin(p, q);
+	    printf("fn=%d\n", fn);
 	    n = p * q;
-	    printf("e=%d\n", e);
+	    if(!coPrime(e, fn)){
+	    	e = generate_prime(3, 11);
+	    	printf("e=%d\n", e);
+	    	p = generate_prime(11, 21);
+	    	q = generate_prime(21, 41);
+	    	printf("p=%d q=%d\n", p, q);
+	    	fn = fin(p, q);
+	    	printf("fn=%d\n", fn);
+	    	n = p * q;
+	    }
 	    c = encrypt_rsa(m, e, n);
 	    printf("cipher=%d\n", c);
-	    numberFactorization(n, &p, &q);
-	    
+	    numberFactorization(n, &p1, &q1);
+	    printf("p1=%d q1=%d\n", p1, q1);
+	    fn = fin(p1, q1);
 	    printf("fn=%d\n", fn);
 	    d = get_decryption_key(e, fn);
 	    printf("d=%d\n", d);
