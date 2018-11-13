@@ -191,6 +191,13 @@ void numberFactorization(int n, int *p, int *q){
 	return ;
 }
 
+int ctoi(char *c)
+{
+    int a;
+    a= *c - '0';
+    return a;
+}
+
 void usage(){
 	printf("[*] usage: ./rsa <nr msg>\n");
 }
@@ -198,7 +205,7 @@ void usage(){
 void main(int argc, char *argv[]){
 	int n, p, q, e, fn, d, m, c, md, p1, q1;
 	if(argc > 1){
-	    m = atoi(argv[1]);
+	    m = ctoi(argv[1]);
 	    e = generate_prime(3, 11);
 	    printf("e=%d\n", e);
 	    p = generate_prime(11, 21);
@@ -207,7 +214,7 @@ void main(int argc, char *argv[]){
 	    fn = fin(p, q);
 	    printf("fn=%d\n", fn);
 	    n = p * q;
-	    if(!coPrime(e, fn)){
+	    while(!coPrime(e, fn)){
 	    	e = generate_prime(3, 11);
 	    	printf("e=%d\n", e);
 	    	p = generate_prime(11, 21);
